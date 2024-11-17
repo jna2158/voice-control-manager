@@ -4,21 +4,17 @@
   "version": "1.0.0",
   "description": "음성으로 크롬 브라우저를 제어하는 확장프로그램입니다.",
   
-  "icons": {
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  
   "permissions": [
     "tabs",
     "activeTab"
   ],
 
+  "host_permissions": [
+    "*://*/*"
+  ],
+
   "action": {
-    "default_popup": "popup/popup.html",
-    "default_icon": {
-      "48": "icons/icon48.png"
-    }
+    "default_popup": "popup/popup.html"
   },
 
   "background": {
@@ -28,7 +24,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content/content.js"]
+      "js": ["popup/popup.js"]
     }
   ]
 }

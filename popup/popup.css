@@ -1,0 +1,26 @@
+.container {
+  width: 300px;
+  padding: 16px;
+}
+
+button {
+  width: 100%;
+  padding: 8px;
+  background: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#status {
+  margin-top: 10px;
+  color: #666;
+}
+
+#result {
+  margin-top: 10px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+}
