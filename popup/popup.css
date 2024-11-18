@@ -24,3 +24,12 @@ button {
   background: #f5f5f5;
   border-radius: 4px;
 }
+
+.settings-link {
+  display: block;
+  text-decoration: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  padding-top: 20px;
+}
