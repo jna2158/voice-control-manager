@@ -1,47 +1,53 @@
-let recognition = null;
+let recog = null;
 let isRecognizing = false;
 
-function startRecognition() {
-  if (!recognition) {
-    recognition = new webkitSpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
+// 음성 인식 시작
+const startRecognition = () => {
+  const voiceButton = document.getElementById("voiceButton");
+  const statusText = document.getElementById("status");
 
-    recognition.onresult = (event) => {
+  voiceButton.textContent = "음성 인식 중지";
+  statusText.textContent = "음성 인식 중...";
+
+  if (!recog) {
+    recog = new webkitSpeechRecognition();
+    recog.continuous = true;
+    recog.interimResults = true;
+
+    recog.onresult = (event) => {
       const result = event.results[event.results.length - 1];
       const transcript = result[0].transcript;
       
       if (result.isFinal) {
         chrome.runtime.sendMessage({
-          action: 'transcriptResult',
+          action: "transcriptResult",
           transcript: transcript
         });
       }
     };
 
-    recognition.onend = () => {
+    recog.onend = () => {
       if (isRecognizing) {
-        recognition.start();
+        recog.start();
       }
     };
   }
 
-  recognition.start();
+  recog.start();
   isRecognizing = true;
 }
 
 function stopRecognition() {
-  if (recognition) {
-    recognition.stop();
+  if (recog) {
+    recog.stop();
     isRecognizing = false;
   }
 }
-console.log("content loaded !!!");
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'startRecognition') {
+  if (message.action === "startRecognition") {
     startRecognition();
-  } else if (message.action === 'stopRecognition') {
+  } else if (message.action === "stopRecognition") {
     stopRecognition();
   }
 });
