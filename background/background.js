@@ -1,8 +1,26 @@
 import { voiceRecognitionService } from "../shared/service/voice-recognition.service.js";
+import { commandHandlerService } from "../shared/service/command-service.js";
 
 let activeTabId = null;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "transcriptResult") {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      if (tabs[0]) {
+        const wasCommandExecuted = await commandHandlerService.handleCommand(
+          message.transcript,
+          tabs[0].id
+        );
+
+        if (wasCommandExecuted) {
+          chrome.runtime.sendMessage({
+            action: "commandExecuted",
+            command: message.transcript,
+          });
+        }
+      }
+    });
+  }
   if (message.action === "startVoiceRecognition") {
     try {
       voiceRecognitionService.start((result) => {
@@ -17,13 +35,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     return true;
   } else if (message.action === "stopVoiceRecognition") {
-    console.log("음성 인식 중지");
     voiceRecognitionService.stop();
     sendResponse({ status: "success" });
   } else if (message.action === "transcriptResult") {
     console.log("Received transcript:", message.transcript);
   }
-  return true; // 비동기 응답을 위해 필요
+  return true;
 });
 
 chrome.action.onClicked.addListener((tab) => {
