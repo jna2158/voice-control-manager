@@ -3,31 +3,26 @@
   "name": "음성 제어 확장프로그램",
   "version": "1.0.0",
   "description": "음성으로 크롬 브라우저를 제어하는 확장프로그램입니다.",
-  
-  "permissions": [
-    "tabs",
-    "activeTab",
-    "scripting",
-    "storage"
-  ],
 
-  "host_permissions": [
-    "*://*/*"
-  ],
+  "permissions": ["tabs", "activeTab", "scripting", "storage", "webNavigation"],
+
+  "host_permissions": ["*://*/*"],
 
   "action": {
     "default_popup": "popup/popup.html"
   },
 
   "background": {
-    "service_worker": "background/background.js"
+    "service_worker": "background/background.js",
+    "type": "module"
   },
 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content/content.js"],
-      "type": "module"
+      "type": "module",
+      "run_at": "document_idle"
     }
   ]
 }
