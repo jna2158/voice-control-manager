@@ -33,10 +33,14 @@ export const VOICE_COMMANDS = {
       if (!hasKeyword(transcript, keywords)) return false;
 
       // 검색어 추출
-      const searchTerm = keywords.reduce((term, keyword) => {
-        const parts = transcript.split(keyword);
-        return parts[0].trim() || parts[1].trim();
-      }, "");
+      let searchTerm = "";
+      for (const keyword of keywords) {
+        if (transcript.includes(keyword)) {
+          const parts = transcript.split(keyword);
+          searchTerm = parts[0].trim() || parts[1].trim();
+          if (searchTerm) break;
+        }
+      }
       return searchTerm ? { match: true, searchTerm } : false;
     },
   },

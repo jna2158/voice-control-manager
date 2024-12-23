@@ -33,3 +33,34 @@ button {
   text-align: center;
   padding-top: 20px;
 }
+
+.side-panel-guide {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.side-panel-guide p {
+  margin: 0 0 8px 0;
+}
+
+.side-panel-guide ol {
+  margin: 0 0 8px 20px;
+  padding: 0;
+}
+
+.shortcut {
+  color: #666;
+  font-size: 12px;
+}
+
+kbd {
+  background-color: #eee;
+  border-radius: 3px;
+  border: 1px solid #b4b4b4;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  padding: 2px 4px;
+  font-size: 11px;
+}

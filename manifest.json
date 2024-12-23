@@ -4,7 +4,18 @@
   "version": "1.0.0",
   "description": "음성으로 크롬 브라우저를 제어하는 확장프로그램입니다.",
 
-  "permissions": ["tabs", "activeTab", "scripting", "storage", "webNavigation"],
+  "side_panel": {
+    "default_path": "sidePanel/sidePanel.html"
+  },
+
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "scripting",
+    "storage",
+    "webNavigation",
+    "sidePanel"
+  ],
 
   "host_permissions": ["*://*/*"],
 
