@@ -11,6 +11,7 @@ const registerCommand = (commandType, action) => {
 };
 
 const handleCommand = async (transcript, tabId) => {
+  console.log("명령어 처리 시작", transcript);
   for (const [commandType, command] of commands.entries()) {
     if (command.config.match(transcript)) {
       console.log(`명령어 매칭 성공: ${commandType}`, {
@@ -32,6 +33,7 @@ export const commandHandlerService = {
 
 // 명령어 등록하기
 commandHandlerService.registerCommand("REFRESH", async (tabId) => {
+  console.log("새로고침 했음  !");
   await chrome.tabs.reload(tabId);
   return true;
 });

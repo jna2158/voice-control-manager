@@ -1,8 +1,8 @@
 import { voiceRecognitionService } from "../shared/service/voice-recognition.service.js";
 import { commandHandlerService } from "../shared/service/command-service.js";
-import { debounce } from "../shared/utils/debounce.js";
 
-let activeTabId = null;
+let activeTabId = null; // 현재 활성화된 탭 ID
+let lastTranscriptTimeout = null; // 타이머 ID
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // 음성 인식 시작
@@ -20,13 +20,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
     return true;
   }
+
   // 음성 인식 결과 받음
   if (message.action === "transcriptResult") {
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       if (tabs[0]) {
-        const debounceHandler = debounce(async () => {
+        if (lastTranscriptTimeout) {
+          // 이전 타이머가 있다면 취소
+          clearTimeout(lastTranscriptTimeout);
+        }
+
+        // 새로운 타이머 설정
+        lastTranscriptTimeout = setTimeout(async () => {
           const wasCommandExecuted = await commandHandlerService.handleCommand(
-            message.transcript,
+            message.transcript.replace(/\s+/g, ""),
             tabs[0].id
           );
 
@@ -36,11 +43,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
               command: message.transcript,
             });
           }
-        }, 1000);
-        debounceHandler();
+          lastTranscriptTimeout = null;
+        }, 1000); // 1초 대기
       }
     });
   }
+
   // 음성 인식 중지
   if (message.action === "stopVoiceRecognition") {
     voiceRecognitionService.stop();
