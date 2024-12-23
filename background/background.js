@@ -26,7 +26,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       if (tabs[0]) {
         if (lastTranscriptTimeout) {
-          // 이전 타이머가 있다면 취소
           clearTimeout(lastTranscriptTimeout);
         }
 
@@ -44,7 +43,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             });
           }
           lastTranscriptTimeout = null;
-        }, 1000); // 1초 대기
+        }, 1000);
       }
     });
   }

@@ -11,7 +11,6 @@ const registerCommand = (commandType, action) => {
 };
 
 const handleCommand = async (transcript, tabId) => {
-  console.log("명령어 처리 시작", transcript);
   for (const [commandType, command] of commands.entries()) {
     if (command.config.match(transcript)) {
       console.log(`명령어 매칭 성공: ${commandType}`, {
