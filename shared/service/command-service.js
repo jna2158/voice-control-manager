@@ -98,3 +98,80 @@ commandHandlerService.registerCommand("SCROLL_DOWN", async (tabId) => {
   });
   return true;
 });
+
+// 새로운 명령어들 추가
+commandHandlerService.registerCommand("GO_BACK", async (tabId) => {
+  console.log("GO_BACK 명령어 실행");
+  await chrome.tabs.goBack(tabId);
+  return true;
+});
+
+commandHandlerService.registerCommand("GO_FORWARD", async (tabId) => {
+  console.log("GO_FORWARD 명령어 실행");
+  await chrome.tabs.goForward(tabId);
+  return true;
+});
+
+commandHandlerService.registerCommand("ZOOM_IN", async (tabId) => {
+  console.log("ZOOM_IN 명령어 실행");
+  await chrome.tabs.getZoom(tabId).then(async (zoomFactor) => {
+    await chrome.tabs.setZoom(tabId, zoomFactor + 0.1);
+  });
+  return true;
+});
+
+commandHandlerService.registerCommand("ZOOM_OUT", async (tabId) => {
+  console.log("ZOOM_OUT 명령어 실행");
+  await chrome.tabs.getZoom(tabId).then(async (zoomFactor) => {
+    await chrome.tabs.setZoom(tabId, zoomFactor - 0.1);
+  });
+  return true;
+});
+
+commandHandlerService.registerCommand("CLOSE_TAB", async (tabId) => {
+  console.log("CLOSE_TAB 명령어 실행");
+  await chrome.tabs.remove(tabId);
+  return true;
+});
+
+commandHandlerService.registerCommand(
+  "CLICK_LINK",
+  async (tabId, matchResult) => {
+    console.log("CLICK_LINK 명령어 실행", matchResult);
+    const result = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: (linkText) => {
+        const searchResults = document.getElementById("search");
+        if (!searchResults)
+          return { success: false, error: "해당되는 링크가 없습니다." };
+
+        const links = Array.from(searchResults.querySelectorAll("a")).filter(
+          (link) => {
+            const rect = link.getBoundingClientRect();
+            const activeLink =
+              rect.width > 0 &&
+              rect.height > 0 &&
+              link.offsetParent !== null &&
+              window.getComputedStyle(link).display !== "none" &&
+              window.getComputedStyle(link).visibility !== "hidden" &&
+              link.textContent.trim() !== "";
+
+            return activeLink;
+          }
+        );
+
+        const targetLink = links.find((link) =>
+          link.textContent.toLowerCase().includes(linkText.toLowerCase())
+        );
+
+        if (targetLink) {
+          targetLink.click();
+          return { success: true };
+        }
+        return { success: false, error: "해당되는 링크가 없습니다." };
+      },
+      args: [matchResult.linkText],
+    });
+    return true;
+  }
+);

@@ -63,7 +63,7 @@ export const VOICE_COMMANDS = {
     },
   },
   SCROLL_UP: {
-    keywords: ["위로", "위", "올라"],
+    keywords: ["위로", "올라"],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_UP;
@@ -78,6 +78,73 @@ export const VOICE_COMMANDS = {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_DOWN;
       if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
       return hasKeyword(transcript, keywords);
+    },
+  },
+  GO_BACK: {
+    keywords: ["뒤로", "뒤", "돌아가"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.GO_BACK;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+  GO_FORWARD: {
+    keywords: ["앞으로 가기", "앞으로"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.GO_FORWARD;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+  ZOOM_IN: {
+    keywords: ["확대", "크게", "크게 보기"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.ZOOM_IN;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+
+  ZOOM_OUT: {
+    keywords: ["축소", "작게", "작게 보기"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.ZOOM_OUT;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+
+  CLOSE_TAB: {
+    keywords: [
+      "탭 닫기",
+      "탭닫기",
+      "페이지 닫기",
+      "페이지닫기",
+      "닫아",
+      "닫아줘",
+    ],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.CLOSE_TAB;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+  CLICK_LINK: {
+    keywords: ["클릭"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.CLICK_LINK;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      const clickMatch = transcript.match(/(.+?)\s*클릭/);
+      if (clickMatch) {
+        return { match: true, linkText: clickMatch[1].trim() };
+      }
+
+      return false;
     },
   },
 };
