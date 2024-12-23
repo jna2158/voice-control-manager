@@ -58,3 +58,43 @@ commandHandlerService.registerCommand("SEARCH", async (tabId, matchResult) => {
   }
   return true;
 });
+commandHandlerService.registerCommand("SCROLL_TOP", async (tabId) => {
+  console.log("SCROLL_TOP 명령어 실행");
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      window.scrollTo(0, 0);
+    },
+  });
+  return true;
+});
+commandHandlerService.registerCommand("SCROLL_BOTTOM", async (tabId) => {
+  console.log("SCROLL_BOTTOM 명령어 실행");
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      window.scrollTo(0, document.body.scrollHeight);
+    },
+  });
+  return true;
+});
+commandHandlerService.registerCommand("SCROLL_UP", async (tabId) => {
+  console.log("SCROLL_UP 명령어 실행");
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      window.scrollBy(0, -window.innerHeight * 0.7);
+    },
+  });
+  return true;
+});
+commandHandlerService.registerCommand("SCROLL_DOWN", async (tabId) => {
+  console.log("SCROLL_DOWN 명령어 실행");
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    func: () => {
+      window.scrollBy(0, window.innerHeight * 0.7);
+    },
+  });
+  return true;
+});

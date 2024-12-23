@@ -40,4 +40,40 @@ export const VOICE_COMMANDS = {
       return searchTerm ? { match: true, searchTerm } : false;
     },
   },
+  SCROLL_TOP: {
+    keywords: ["맨 위로", "맨위로", "맨 위", "맨 위로 가기"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_TOP;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+  SCROLL_BOTTOM: {
+    keywords: ["맨 아래로", "맨아래", "맨 아래", "맨 아래로 가기"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_BOTTOM;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+  SCROLL_UP: {
+    keywords: ["위로", "위", "올라"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_UP;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
+  SCROLL_DOWN: {
+    keywords: ["아래로", "아래", "내려"],
+    blockingKeywords: ["하지마", "안 해", "취소"],
+    match: (transcript) => {
+      const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_DOWN;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
+      return hasKeyword(transcript, keywords);
+    },
+  },
 };
