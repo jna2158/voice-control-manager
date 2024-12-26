@@ -8,6 +8,7 @@ import {
   handleVoiceButtonClick,
 } from "./handlers/voice-recognition-handler.js";
 import { UI_MESSAGES } from "./constants.js";
+import { testOpenaiKey } from "../api/openai-key-test.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const voiceButton = document.getElementById("voiceButton");
@@ -66,6 +67,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     return Array.from(new Uint8Array(exported));
   };
 
+  // 커스텀 알림 표시å
+  const showCustomAlert = (message) => {
+    const alert = document.createElement("div");
+    alert.className = "custom-error-alert";
+    alert.textContent = message;
+    document.body.appendChild(alert);
+
+    setTimeout(() => alert.classList.add("show"), 10);
+
+    setTimeout(() => {
+      alert.classList.remove("show");
+      setTimeout(() => alert.remove(), 300);
+    }, 3000);
+  };
+
   // API 키 등록하기 버튼 클릭
   showApiKeyInputBtn.addEventListener("click", function () {
     apiKeyInputDiv.classList.remove("hidden");
@@ -83,8 +99,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   saveApiKeyBtn.addEventListener("click", async () => {
     const apiKey = document.getElementById("openaiKey").value;
     if (apiKey.trim()) {
+      const isValid = await testOpenaiKey(apiKey);
+      if (!isValid) {
+        showCustomAlert("유효하지 않은 API 키입니다. 다시 확인해주세요.");
+        return;
+      }
       const encryptedKey = await encryptApiKey(apiKey);
-      console.log("encryptedKey", encryptedKey);
       chrome.storage.local.set({ openaiApiKey: encryptedKey }, () => {
         modeSelection.classList.add("hidden");
         voiceRecognitionUI.classList.remove("hidden");
