@@ -14,7 +14,8 @@
     "scripting",
     "storage",
     "webNavigation",
-    "sidePanel"
+    "sidePanel",
+    "unlimitedStorage"
   ],
 
   "host_permissions": ["*://*/*"],

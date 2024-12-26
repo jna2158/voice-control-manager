@@ -1,4 +1,5 @@
 import { VOICE_COMMANDS } from "../constants/voice-commands.js";
+import { openai } from "../../api/openai.js";
 
 const commands = new Map();
 
@@ -12,11 +13,13 @@ const registerCommand = (commandType, action) => {
 
 // 명령어 처리
 const handleCommand = async (transcript, tabId) => {
+  if (!transcript || transcript.length === 0) return false;
+
   for (const [commandType, command] of commands.entries()) {
     const { matched, matchResult } = checkIsCommandMaches(command, transcript);
 
     if (matched) {
-      console.log(`명령어 매칭 성공: ${commandType}`, {
+      console.log(`!! 키워드 매칭 성공: ${commandType}`, {
         input: transcript,
         command: command.config,
         matchResult,
@@ -25,7 +28,19 @@ const handleCommand = async (transcript, tabId) => {
     }
   }
 
-  console.log("매칭된 명령어 없음:", transcript);
+  const commandResult = await openai(transcript);
+  if (commandResult) {
+    console.log(`!! OpenAI 매칭 성공: ${commandResult}`);
+
+    const { commandType, ...params } = commandResult;
+    const command = commands.get(commandType);
+
+    if (command) {
+      return await command.action(tabId, params);
+    }
+  }
+
+  console.log("!! 매칭된 명령어 없음:", transcript);
   return false;
 };
 
@@ -48,6 +63,7 @@ commandHandlerService.registerCommand("REFRESH", async (tabId) => {
   await chrome.tabs.reload(tabId);
   return true;
 });
+
 commandHandlerService.registerCommand("SEARCH", async (tabId, matchResult) => {
   console.log("SEARCH 명령어 실행", matchResult);
   if (matchResult.searchTerm) {
@@ -58,6 +74,7 @@ commandHandlerService.registerCommand("SEARCH", async (tabId, matchResult) => {
   }
   return true;
 });
+
 commandHandlerService.registerCommand("SCROLL_TOP", async (tabId) => {
   console.log("SCROLL_TOP 명령어 실행");
   await chrome.scripting.executeScript({
@@ -68,6 +85,7 @@ commandHandlerService.registerCommand("SCROLL_TOP", async (tabId) => {
   });
   return true;
 });
+
 commandHandlerService.registerCommand("SCROLL_BOTTOM", async (tabId) => {
   console.log("SCROLL_BOTTOM 명령어 실행");
   await chrome.scripting.executeScript({
@@ -78,6 +96,7 @@ commandHandlerService.registerCommand("SCROLL_BOTTOM", async (tabId) => {
   });
   return true;
 });
+
 commandHandlerService.registerCommand("SCROLL_UP", async (tabId) => {
   console.log("SCROLL_UP 명령어 실행");
   await chrome.scripting.executeScript({
@@ -88,6 +107,7 @@ commandHandlerService.registerCommand("SCROLL_UP", async (tabId) => {
   });
   return true;
 });
+
 commandHandlerService.registerCommand("SCROLL_DOWN", async (tabId) => {
   console.log("SCROLL_DOWN 명령어 실행");
   await chrome.scripting.executeScript({
@@ -99,7 +119,6 @@ commandHandlerService.registerCommand("SCROLL_DOWN", async (tabId) => {
   return true;
 });
 
-// 새로운 명령어들 추가
 commandHandlerService.registerCommand("GO_BACK", async (tabId) => {
   console.log("GO_BACK 명령어 실행");
   await chrome.tabs.goBack(tabId);
