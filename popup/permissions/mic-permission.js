@@ -32,12 +32,14 @@ export const allowMicPermission = async (permission) => {
 // 마이크 권한 거부시 설정 이동
 export const goToMicSetting = () => {
   const statusText = document.getElementById("status");
-  statusText.textContent =
-    "마이크 권한이 거부되었습니다. 설정으로 이동하시겠습니까?";
+  const voiceButton = document.getElementById("voiceButton");
+  voiceButton.style.display = "none";
+  statusText.className = "status-message";
+  statusText.textContent = "마이크 권한이 거부되었습니다";
 
   const settingsLink = document.createElement("a");
   settingsLink.className = "settings-link";
-  settingsLink.textContent = "마이크 설정으로 이동 ->";
+  settingsLink.textContent = "마이크 설정으로 이동 →";
   settingsLink.onclick = () => {
     chrome.tabs.create({
       url: "chrome://settings/content/microphone",

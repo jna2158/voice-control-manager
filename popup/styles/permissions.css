@@ -1,0 +1,24 @@
+.status-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: #333;
+  margin: 16px 0;
+}
+
+.settings-link {
+  color: #2196f3;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  border: 1px solid #2196f3;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.settings-link:hover {
+  background-color: #2196f3;
+  color: white;
+}
