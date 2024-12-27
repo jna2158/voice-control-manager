@@ -148,7 +148,6 @@ kbd {
 
 .instructions {
   padding: 15px;
-  margin: 15px 0;
   background-color: #f8f9fa;
   border-radius: 8px;
 }
@@ -225,4 +224,14 @@ kbd {
   font-weight: normal;
   padding-left: 8px;
   border-left: 2px solid #e8eaed;
+}
+
+.side-panel-tip {
+  font-size: 0.9em;
+  color: #d93025;
+  margin: 15px 0;
+  padding: 8px;
+  background-color: #fce8e6;
+  border-radius: 4px;
+  line-height: 1.4;
 }
