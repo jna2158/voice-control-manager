@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (apiKey.trim()) {
       const isValid = await testOpenaiKey(apiKey);
       if (!isValid) {
-        customAlert("유효하지 않은 API 키입니다. 다시 확인해주세요.");
+        customAlert("API 키가 올바르지 않습니다. 키를 다시 확인해주세요.");
         return;
       }
       const encryptedKey = await encryptApiKey(apiKey);
