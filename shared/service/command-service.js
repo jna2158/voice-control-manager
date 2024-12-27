@@ -160,34 +160,39 @@ commandHandlerService.registerCommand(
     const result = await chrome.scripting.executeScript({
       target: { tabId },
       func: (linkText) => {
-        const searchResults = document.getElementById("search");
-        if (!searchResults)
-          return { success: false, error: "해당되는 링크가 없습니다." };
+        // 클릭 가능한 모든 요소 선택
+        const clickableElements = Array.from(
+          document.querySelectorAll(
+            'a, button, [role="button"], input[type="submit"], input[type="button"]'
+          )
+        ).filter((element) => {
+          const rect = element.getBoundingClientRect();
+          const isVisible =
+            rect.width > 0 &&
+            rect.height > 0 &&
+            element.offsetParent !== null &&
+            window.getComputedStyle(element).display !== "none" &&
+            window.getComputedStyle(element).visibility !== "hidden";
 
-        const links = Array.from(searchResults.querySelectorAll("a")).filter(
-          (link) => {
-            const rect = link.getBoundingClientRect();
-            const activeLink =
-              rect.width > 0 &&
-              rect.height > 0 &&
-              link.offsetParent !== null &&
-              window.getComputedStyle(link).display !== "none" &&
-              window.getComputedStyle(link).visibility !== "hidden" &&
-              link.textContent.trim() !== "";
+          const elementText = element.textContent.trim() || element.value || "";
 
-            return activeLink;
-          }
-        );
+          return isVisible && elementText !== "";
+        });
 
-        const targetLink = links.find((link) =>
-          link.textContent.toLowerCase().includes(linkText.toLowerCase())
-        );
+        const targetElement = clickableElements.find((element) => {
+          const elementText = (
+            element.textContent.trim() ||
+            element.value ||
+            ""
+          ).toLowerCase();
+          return elementText.includes(linkText.toLowerCase());
+        });
 
-        if (targetLink) {
-          targetLink.click();
+        if (targetElement) {
+          targetElement.click();
           return { success: true };
         }
-        return { success: false, error: "해당되는 링크가 없습니다." };
+        return { success: false, error: "해당되는 요소를 찾을 수 없습니다." };
       },
       args: [matchResult.linkText],
     });

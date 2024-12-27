@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         // 새로운 타이머 설정
         lastTranscriptTimeout = setTimeout(async () => {
           const wasCommandExecuted = await commandHandlerService.handleCommand(
-            message.transcript.replace(/\s+/g, ""),
+            message.transcript,
             tabs[0].id
           );
 

@@ -54,7 +54,7 @@ export const VOICE_COMMANDS = {
     },
   },
   SCROLL_BOTTOM: {
-    keywords: ["맨 아래로", "맨아래", "맨 아래", "맨 아래로 가기"],
+    keywords: ["맨 아래로", "맨아래", "맨 아래"],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_BOTTOM;
