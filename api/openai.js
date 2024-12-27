@@ -1,3 +1,5 @@
+import { decryptApiKey } from "../popup/utils/decryption-utils.js";
+
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions";
 const COMMAND_MAPPING = {
   새로고침: "REFRESH",
@@ -11,29 +13,6 @@ const COMMAND_MAPPING = {
   축소: "ZOOM_OUT",
   "탭 닫기": "CLOSE_TAB",
   클릭: "CLICK_LINK",
-};
-
-// API 키 복호화
-export const decryptApiKey = async () => {
-  const encryptedKey = await chrome.storage.local.get("openaiApiKey");
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new Uint8Array(encryptedKey.openaiApiKey.key),
-    "AES-GCM",
-    true,
-    ["decrypt"]
-  );
-
-  const decrypted = await crypto.subtle.decrypt(
-    {
-      name: "AES-GCM",
-      iv: new Uint8Array(encryptedKey.openaiApiKey.iv),
-    },
-    key,
-    new Uint8Array(encryptedKey.openaiApiKey.encrypted)
-  );
-
-  return new TextDecoder().decode(decrypted);
 };
 
 // OpenAI API 호출

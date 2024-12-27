@@ -9,6 +9,8 @@ import {
 } from "./handlers/voice-recognition-handler.js";
 import { UI_MESSAGES } from "./constants.js";
 import { testOpenaiKey } from "../api/openai-key-test.js";
+import { encryptApiKey } from "./utils/encryption-utils.js";
+import { customAlert } from "./utils/alert-utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const voiceButton = document.getElementById("voiceButton");
@@ -24,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // 저장된 API 키 확인 및 초기 화면 설정
   const apiKey = await chrome.storage.local.get("openaiApiKey");
   if (apiKey.openaiApiKey) {
-    // API 키가 존재하면 바로 음성 인식 UI 표시
+    // API 키가 존재하면 음성 인식 UI 표시
     modeSelection.classList.add("hidden");
     voiceRecognitionUI.classList.remove("hidden");
     initializeVoiceRecognition();
@@ -34,62 +36,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     voiceRecognitionUI.classList.add("hidden");
   }
 
-  // API 키 암호화
-  const encryptApiKey = async (apiKey) => {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(apiKey);
-
-    // 암호화 키 생성
-    const key = await crypto.subtle.generateKey(
-      { name: "AES-GCM", length: 256 },
-      true,
-      ["encrypt", "decrypt"]
-    );
-
-    // 암호화
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-    const encryptedData = await crypto.subtle.encrypt(
-      { name: "AES-GCM", iv },
-      key,
-      data
-    );
-
-    return {
-      encrypted: Array.from(new Uint8Array(encryptedData)),
-      iv: Array.from(iv),
-      key: await exportCryptoKey(key),
-    };
-  };
-
-  // 암호화 키 내보내기
-  const exportCryptoKey = async (key) => {
-    const exported = await crypto.subtle.exportKey("raw", key);
-    return Array.from(new Uint8Array(exported));
-  };
-
-  // 커스텀 알림 표시å
-  const showCustomAlert = (message) => {
-    const alert = document.createElement("div");
-    alert.className = "custom-error-alert";
-    alert.textContent = message;
-    document.body.appendChild(alert);
-
-    setTimeout(() => alert.classList.add("show"), 10);
-
-    setTimeout(() => {
-      alert.classList.remove("show");
-      setTimeout(() => alert.remove(), 300);
-    }, 3000);
-  };
-
   // API 키 등록하기 버튼 클릭
-  showApiKeyInputBtn.addEventListener("click", function () {
+  showApiKeyInputBtn.addEventListener("click", () => {
     apiKeyInputDiv.classList.remove("hidden");
     apiKeySection.classList.add("hidden");
   });
 
   // 기본 모드 시작
-  basicModeBtn.addEventListener("click", function () {
+  basicModeBtn.addEventListener("click", () => {
     modeSelection.classList.add("hidden");
     voiceRecognitionUI.classList.remove("hidden");
     initializeVoiceRecognition();
@@ -101,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (apiKey.trim()) {
       const isValid = await testOpenaiKey(apiKey);
       if (!isValid) {
-        showCustomAlert("유효하지 않은 API 키입니다. 다시 확인해주세요.");
+        customAlert("유효하지 않은 API 키입니다. 다시 확인해주세요.");
         return;
       }
       const encryptedKey = await encryptApiKey(apiKey);
