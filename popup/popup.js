@@ -11,6 +11,10 @@ import { UI_MESSAGES } from "./constants.js";
 import { testOpenaiKey } from "../api/openai-key-test.js";
 import { encryptApiKey } from "./utils/encryption-utils.js";
 import { customAlert } from "./utils/alert-utils.js";
+import {
+  checkNetworkConnection,
+  setupNetworkListeners,
+} from "./utils/network-utils.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const voiceButton = document.getElementById("voiceButton");
@@ -22,6 +26,30 @@ document.addEventListener("DOMContentLoaded", async () => {
   const apiKeySection = document.getElementById("apiKeySection");
   const basicModeBtn = document.getElementById("toggleApiKey");
   const saveApiKeyBtn = document.getElementById("saveApiKey");
+
+  // 음성 인식 초기화 함수
+  const initializeVoiceRecognition = async () => {
+    // 초기 마이크 권한 확인
+    const micPermission = await checkMicPermission();
+    await allowMicPermission(micPermission);
+
+    // 음성인식 지원 안한다면
+    if (!checkVoiceRecognition()) {
+      voiceButton.textContent = UI_MESSAGES.BROWSER_NOT_SUPPORTED;
+      voiceButton.disabled = true;
+      return;
+    }
+
+    // 백그라운드로부터 상태 업데이트 수신
+    chrome.runtime.onMessage.addListener((message) => {
+      updateUIStatus(message, voiceButton, statusText);
+    });
+
+    // 음성 인식 버튼 클릭 이벤트
+    voiceButton.addEventListener("click", () =>
+      handleVoiceButtonClick(voiceButton, statusText)
+    );
+  };
 
   // 저장된 API 키 확인 및 초기 화면 설정
   const apiKey = await chrome.storage.local.get("openaiApiKey");
@@ -55,7 +83,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (apiKey.trim()) {
       const isValid = await testOpenaiKey(apiKey);
       if (!isValid) {
-        customAlert("API 키가 올바르지 않습니다. 키를 다시 확인해주세요.");
+        customAlert(
+          "API 키가 올바르지 않습니다. 키를 다시 확인해주세요.",
+          "error",
+          3000
+        );
         return;
       }
       const encryptedKey = await encryptApiKey(apiKey);
@@ -67,27 +99,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  // 음성 인식 초기화 함수
-  const initializeVoiceRecognition = async () => {
-    // 초기 마이크 권한 확인
-    const micPermission = await checkMicPermission();
-    await allowMicPermission(micPermission);
-
-    // 음성인식 지원 안한다면
-    if (!checkVoiceRecognition()) {
-      voiceButton.textContent = UI_MESSAGES.BROWSER_NOT_SUPPORTED;
-      voiceButton.disabled = true;
-      return;
-    }
-
-    // 백그라운드로부터 상태 업데이트 수신
-    chrome.runtime.onMessage.addListener((message) => {
-      updateUIStatus(message, voiceButton, statusText);
-    });
-
-    // 음성 인식 버튼 클릭 이벤트
-    voiceButton.addEventListener("click", () =>
-      handleVoiceButtonClick(voiceButton, statusText)
+  // 네트워크 상태 초기 체크
+  if (!checkNetworkConnection()) {
+    customAlert(
+      "네트워크 연결이 없습니다. 연결 상태를 확인해주세요.",
+      "warning"
     );
-  };
+    voiceButton.disabled = true;
+  }
+
+  // 네트워크 상태 변경 감지
+  setupNetworkListeners((isOnline) => {
+    if (!isOnline) {
+      customAlert(
+        "네트워크 연결이 끊겼습니다. 연결 상태를 확인해주세요.",
+        "warning"
+      );
+      voiceButton.disabled = true;
+    } else {
+      const alert = document.querySelector(".custom-alert.warning.show");
+      alert.style.display = "none";
+      voiceButton.disabled = false;
+    }
+  });
 });
