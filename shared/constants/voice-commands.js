@@ -16,7 +16,7 @@ const hasKeyword = (transcript, keywords) => {
 
 export const VOICE_COMMANDS = {
   REFRESH: {
-    keywords: ["새로고침", "새로 고침"],
+    keywords: ["새로고침", "새로 고침", "다시로드", "다시 로드"],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.REFRESH;
@@ -25,7 +25,7 @@ export const VOICE_COMMANDS = {
     },
   },
   SEARCH: {
-    keywords: ["검색", "검색하기", "찾아줘"],
+    keywords: ["검색", "검색하기", "찾아줘", "알아봐줘", "알아보기"],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.SEARCH;
@@ -45,7 +45,14 @@ export const VOICE_COMMANDS = {
     },
   },
   SCROLL_TOP: {
-    keywords: ["맨 위로", "맨위로", "맨 위", "맨 위로 가기"],
+    keywords: [
+      "맨 위로",
+      "맨위로",
+      "맨 위",
+      "맨 위로 가기",
+      "가장 위로",
+      "가장위로",
+    ],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_TOP;
@@ -54,7 +61,7 @@ export const VOICE_COMMANDS = {
     },
   },
   SCROLL_BOTTOM: {
-    keywords: ["맨 아래로", "맨아래", "맨 아래"],
+    keywords: ["맨 아래로", "맨아래", "맨 아래", "가장 아래로", "가장아래로"],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.SCROLL_BOTTOM;
@@ -85,6 +92,7 @@ export const VOICE_COMMANDS = {
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.GO_BACK;
+      if (hasBlockingKeyword(transcript, blockingKeywords)) return false;
       return hasKeyword(transcript, keywords);
     },
   },
@@ -98,7 +106,7 @@ export const VOICE_COMMANDS = {
     },
   },
   ZOOM_IN: {
-    keywords: ["확대", "크게", "크게 보기"],
+    keywords: ["확대", "크게", "크게 보기", "키우기"],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.ZOOM_IN;
@@ -108,7 +116,7 @@ export const VOICE_COMMANDS = {
   },
 
   ZOOM_OUT: {
-    keywords: ["축소", "작게", "작게 보기"],
+    keywords: ["축소", "작게", "작게 보기", "줄이기"],
     blockingKeywords: ["하지마", "안 해", "취소"],
     match: (transcript) => {
       const { keywords, blockingKeywords } = VOICE_COMMANDS.ZOOM_OUT;
