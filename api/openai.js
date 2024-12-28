@@ -28,7 +28,7 @@ export const openai = async (transcript) => {
         Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-3.5-turbo",
         messages: [
           {
             role: "system",
@@ -53,7 +53,10 @@ export const openai = async (transcript) => {
 
     // 검색 명령어일 경우
     if (command.includes("검색")) {
-      const searchTerm = command.replace("검색", "").trim();
+      const searchTerm = command
+        .replace("검색", "")
+        .trim()
+        .replace(/['"]/g, "");
       return { commandType: "SEARCH", searchTerm };
     }
     // 검색 명령어가 아닐 경우
